@@ -208,7 +208,7 @@ You can see clearly that the IQR and the max, min ranges from africa are lower t
     toon_data = st.radio('', ['Life Expectancy', 'Health Expenditure'])
     fig5 = create_plot(toon_data)
     st.plotly_chart(fig5, use_container_width=True)     
-    st.write("""Without Health Expenditure %: This chart illustrates how life expectancy varies across different income groups without taking health expenditure into account.
+    st.write("""Life Expectancy: This chart illustrates how life expectancy varies across different income groups without taking health expenditure into account.
     With Health Expenditure %: This chart illustrates the health expenditure across different income groups. It indicates whether there is a relationship between income group and health expenditure.
     The chart shows that people with different incomes have different life expectancies. It also seems that when a country spends more on healthcare, people tend to live longer. This suggests that putting money into healthcare can make people live longer. But remember, there are other things that can make a difference too.
     """)    
