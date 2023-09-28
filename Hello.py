@@ -131,13 +131,13 @@ def run():
 
     # Calculate the correlation
     correlation = df['Health Expenditure %'].corr(df['Life Expectancy World Bank'])
-    st.write(f"Correlation between health expenditure and life expectancy: {correlation:.2f}")
-
-    # Show the plot
-    st.plotly_chart(fig2, use_container_width=True)     
     st.write("""The correlation between Prevalence of Undernourishment and the life expectancy is -0.69.  This can also be seen in this scatterplot.
 There are a few clear conclusions that we can get from looking at the scatter plot between life expectancy and prevalence of undernourishment. The percentage of people that don’t get enough energy by eating is significantly getting smaller. The most countries of people that don’t eat enough are in Africa, this is as expected. We can also conclude the life expectancy is drastically increasing, more for African countries than for European and Asian countries.
-""")    
+""")  
+    # Show the plot
+    st.plotly_chart(fig2, use_container_width=True)     
+    st.write(f"Correlation between health expenditure and life expectancy: {correlation:.2f}")
+    
     
     average_life_expectancy = df.groupby("IncomeGroup")["Life Expectancy World Bank"].mean().reset_index()
     fig_income = px.bar(average_life_expectancy, y="Life Expectancy World Bank", x="IncomeGroup", 
@@ -146,6 +146,34 @@ There are a few clear conclusions that we can get from looking at the scatter pl
 
     fig_income.update_layout(title= 'Life expectancy per income group', xaxis_title = 'Income Group', yaxis_title = 'Life expectancy (Years)')
     st.plotly_chart(fig_income, use_container_width=True)  
+
+    fig_box = go.Figure(data=go.Box(
+        x=df['Year'],  
+        y=df['Life Expectancy World Bank'],  
+        )
+    )
+
+ 
+
+# Definieer de dropdown-menu-opties voor regio's
+    dropdown_options = [
+        {'label': 'South Asia', 'method': 'update', 'args': [{'y': [df[df['Region'] == 'South Asia']['Life Expectancy World Bank']], 'x': [df[df['Region'] == 'South Asia']['Year']], 'text': [df[df['Region'] == 'South Asia']['Country Name']], 'marker.color': [df[df['Region'] == 'South Asia']['Life Expectancy World Bank']], 'colorbar.title': 'Levensverwachting'}]},
+        {'label': 'Sub-Saharan Africa', 'method': 'update', 'args': [{'y': [df[df['Region'] == 'Sub-Saharan Africa']['Life Expectancy World Bank']], 'x': [df[df['Region'] == 'Sub-Saharan Africa']['Year']], 'text': [df[df['Region'] == 'Sub-Saharan Africa']['Country Name']], 'marker.color': [df[df['Region'] == 'Sub-Saharan Africa']['Life Expectancy World Bank']], 'colorbar.title': 'Levensverwachting'}]},
+        {'label': 'Europe & Central Asia', 'method': 'update', 'args': [{'y': [df[df['Region'] == 'Europe & Central Asia']['Life Expectancy World Bank']], 'x': [df[df['Region'] == 'Europe & Central Asia']['Year']], 'text': [df[df['Region'] == 'Europe & Central Asia']['Country Name']], 'marker.color': [df[df['Region'] == 'Europe & Central Asia']['Life Expectancy World Bank']], 'colorbar.title': 'Levensverwachting'}]},
+        {'label': 'Middle East & North Africa', 'method': 'update', 'args': [{'y': [df[df['Region'] == 'Middle East & North Africa']['Life Expectancy World Bank']], 'x': [df[df['Region'] == 'Middle East & North Africa']['Year']], 'text': [df[df['Region'] == 'Middle East & North Africa']['Country Name']], 'marker.color': [df[df['Region'] == 'Middle East & North Africa']['Life Expectancy World Bank']], 'colorbar.title': 'Levensverwachting'}]},
+        {'label': 'Latin America & Caribbean', 'method': 'update', 'args': [{'y': [df[df['Region'] == 'Latin America & Caribbean']['Life Expectancy World Bank']], 'x': [df[df['Region'] == 'Latin America & Caribbean']['Year']], 'text': [df[df['Region'] == 'Latin America & Caribbean']['Country Name']], 'marker.color': [df[df['Region'] == 'Latin America & Caribbean']['Life Expectancy World Bank']], 'colorbar.title': 'Levensverwachting'}]},
+        {'label': 'East Asia & Pacific', 'method': 'update', 'args': [{'y': [df[df['Region'] == 'East Asia & Pacific']['Life Expectancy World Bank']], 'x': [df[df['Region'] == 'East Asia & Pacific']['Year']], 'text': [df[df['Region'] == 'East Asia & Pacific']['Country Name']], 'marker.color': [df[df['Region'] == 'East Asia & Pacific']['Life Expectancy World Bank']], 'colorbar.title': 'Levensverwachting'}]},
+        {'label': 'North America', 'method': 'update', 'args': [{'y': [df[df['Region'] == 'North America']['Life Expectancy World Bank']], 'x': [df[df['Region'] == 'North America']['Year']], 'text': [df[df['Region'] == 'North America']['Country Name']], 'marker.color': [df[df['Region'] == 'North America']['Life Expectancy World Bank']], 'colorbar.title': 'Levensverwachting'}]},
+    ]
+
+ 
+
+# Voeg het dropdown-menu toe aan de layout
+    fig_box.update_layout(updatemenus=[{'buttons': dropdown_options, 'direction': 'down', 'showactive': True, 'x': 0.76, 'xanchor': 'left', 'y': 1.11, 'yanchor': 'top'}])
+    fig_box.update_layout(title="Life Expectancy by region over the years")
+    fig_box.update_xaxes(title_text='Year')
+    fig_box.update_yaxes(title_text='Life expectancy (Age)')
+    st.plotly_chart(fig_box, use_container_width=True)  
 
 
 # Functie om de plot te maken
@@ -158,7 +186,7 @@ There are a few clear conclusions that we can get from looking at the scatter pl
 
  
 
-    st.title('Interactieve Plot in Streamlit met Checkboxes')
+    st.title('Life Expectancy & Income Group')
 
  
 
@@ -180,7 +208,9 @@ There are a few clear conclusions that we can get from looking at the scatter pl
 
     fig9 = px.bar(top10[top10['Year']==2019], x='Country Name', y='Life Expectancy Difference (2000-2019)',color = 'Region')
     st.plotly_chart(fig9, use_container_width=True)     
-
+    st.write("""Over the past 20 years, countries in Sub-Saharan Africa have shown the most significant improvement. 
+             The figure above displays the top 10 countries with the largest differences in life expectancy from 2001 to 2019. Some of these nations have increased their life expectancy by almost one year annually.
+             """)
     top10 = top10.sort_values(by=['Year'], ascending=False)
     fig10 = px.line(top10, x='Year', y='Life Expectancy World Bank', color = 'Country Name')
     st.plotly_chart(fig10, use_container_width=True)  
@@ -188,15 +218,10 @@ There are a few clear conclusions that we can get from looking at the scatter pl
     figa = px.line(top10, x='Year', y='Prevelance of Undernourishment', color = 'Country Name')
     st.plotly_chart(figa, use_container_width=True)  
 
-    top10 = top10.sort_values(by=['Year'], ascending=False)
-    figb = px.line(top10, x='Year', y='Communicable%', color = 'Country Name')
-    st.plotly_chart(figb, use_container_width=True)  
 
- 
- 
-
-
-
+    st.write("""Concluding the life expectancy has significantly gone up every year for the past 20 years. 
+              There are several factors that are linked to life expectancy. These factors such as income, Prevelance of Undernourishment and Health Expenditure show that a country’s
+               life expectations is directly related to the economic power.""")    
 
 
 if __name__ == "__main__":
