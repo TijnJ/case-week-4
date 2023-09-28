@@ -23,6 +23,7 @@ year_2019_data = df[df['Year'] == 2019]
 
 common_countries = set(year_2000_data['Country Name']).intersection(year_2019_data['Country Name'])
 
+
 df['Life Expectancy Difference (2000-2019)'] = 0  # Initialize the new column
 
 for country in common_countries:
@@ -34,12 +35,15 @@ df = df.sort_values(by=['Country Name','Life Expectancy Difference (2000-2019)']
 
 LOGGER = get_logger(__name__)
 
-
+#plot world global life expectancy
 def run():
     st.set_page_config(
-        page_title="Hello",
+        page_title="Blog on global life expectancy",
         page_icon="👋",
     )
+
+    st.title("A Short Blog On Global Life Expectancy")
+
     # Create the Choropleth plot
     fig_world = go.Figure(data=go.Choropleth(
         locations=df['Country Name'],
@@ -77,34 +81,35 @@ def run():
             - Economic Factors: Economic stability and development are closely linked to life expectancy. Countries with stable economies tend to have better healthcare systems and longer life expectancies. There have been notable changes in life expectancy during this period on the African continent.  
             """)
     
+
     #get the unemployment mean per region
     region_means = df.groupby(['Region', 'Year'])['Unemployment'].mean().reset_index()
 
     #make the line plot
-    fig_line = px.line(region_means, x='Year', y='Unemployment', color='Region',
+    fig_unreg = px.line(region_means, x='Year', y='Unemployment', color='Region',
                          labels={'Unemployment': 'Mean Unemployment Rate', 'Year': 'Year'})
 
     #add titles and legend
-    fig_line.update_layout(
+    fig_unreg.update_layout(
         title='Unemployment rate per Region',
         xaxis_title='Year',
         yaxis_title='Mean Unemployment Rate',
         showlegend=True,
         legend_title_text='Region')
     
-    st.plotly_chart(fig_line, use_container_width=True) 
+    st.plotly_chart(fig_unreg, use_container_width=True) 
     st.write("""Analyzing the unemployment rate per region from 2001 to 2019 using this lineplot we can see that there are some big global fluctuations. These fluctuations could be attributed to economic factors, recessions, growth etc. 
              There are also some regional varations. North America and Europe have a big spike around the 2008 recession in which the unemployment rate did go up quite a bit. 
              In Sub Saharen Africa there hasn't been a big change from 2001 to 2019. Examining the data over nearly two decades allows for the identification of long-term trends. Regions that consistently experience high or low unemployment rates may offer valuable insights into the factors contributing to their labor market dynamics.   
             """)
     
-    fig = px.scatter(y = df['Prevelance of Undernourishment'], x = df['Life Expectancy World Bank'],
+    figlifeexunder = px.scatter(y = df['Prevelance of Undernourishment'], x = df['Life Expectancy World Bank'],
 		animation_frame=df['Year'], color = df['Region'], hover_name = df['Country Name'],
 		size = df['Population (historical estimates)'])
-    fig.update_layout(
-	    title = 'Scatterplot',xaxis_title="Life expectancy (years)", yaxis_title="Prevelance of Undernourishment (%)"
+    figlifeexunder.update_layout(
+	    title = 'Undernourishement & life expectancy by year',xaxis_title="Life expectancy (years)", yaxis_title="Prevelance of Undernourishment (%)"
 	)
-    st.plotly_chart(fig, use_container_width=True)     
+    st.plotly_chart(figlifeexunder, use_container_width=True)     
 
     # Scatter plot
 
@@ -114,7 +119,7 @@ def run():
     'Upper middle income': 'orange',
     'High income': 'green'
     }
-    fig2 = px.scatter(df, 
+    fig_scatter = px.scatter(df, 
                      x='Health Expenditure %', 
                      y='Life Expectancy World Bank', 
                      color='IncomeGroup',
@@ -122,11 +127,11 @@ def run():
                      opacity=0.4, 
                      title='Life Expectancy & Health Expenditure %')
     # Customize the layout
-    fig2.update_layout(
+    fig_scatter.update_layout(
         width=950,
         height=600,
         xaxis_title='Health Expenditure %',
-        yaxis_title='Life Expectancy World Bank',
+        yaxis_title='Life Expectancy (years)',
     )
 
     # Calculate the correlation
@@ -135,7 +140,7 @@ def run():
 There are a few clear conclusions that we can get from looking at the scatter plot between life expectancy and prevalence of undernourishment. The percentage of people that don’t get enough energy by eating is significantly getting smaller. The most countries of people that don’t eat enough are in Africa, this is as expected. We can also conclude the life expectancy is drastically increasing, more for African countries than for European and Asian countries.
 """)  
     # Show the plot
-    st.plotly_chart(fig2, use_container_width=True)     
+    st.plotly_chart(fig_scatter, use_container_width=True)     
     st.write(f"Correlation between health expenditure and life expectancy: {correlation:.2f}")
     
     
@@ -148,6 +153,7 @@ There are a few clear conclusions that we can get from looking at the scatter pl
     st.plotly_chart(fig_income, use_container_width=True)  
 
     st.write("""The bar chart above shows that there could be a positive correlation between the income per capita and life expectancy. This suggest that wealthier countries tend to have a higher life expectancy.""")
+    
     fig_box = go.Figure(data=go.Box(
         x=df['Year'],  
         y=df['Life Expectancy World Bank'],  
@@ -173,21 +179,17 @@ There are a few clear conclusions that we can get from looking at the scatter pl
     fig_box.update_layout(updatemenus=[{'buttons': dropdown_options, 'direction': 'down', 'showactive': True, 'x': 0.76, 'xanchor': 'left', 'y': 1.11, 'yanchor': 'top'}])
     fig_box.update_layout(title="Life Expectancy by region over the years")
     fig_box.update_xaxes(title_text='Year')
-    fig_box.update_yaxes(title_text='Life expectancy (Age)')
+    fig_box.update_yaxes(title_text='Life expectancy (years)')
     st.plotly_chart(fig_box, use_container_width=True)  
 
 
 # Functie om de plot te maken
     def create_plot(toon_data):
         if toon_data == 'Life Expectancy':
-            fig5 = px.scatter(df, x='IncomeGroup', y='Life Expectancy World Bank', title='Zonder Health expenditure %')
+            fig5 = px.scatter(df, x='IncomeGroup', y='Life Expectancy World Bank', title='Life Expectancy & IncomeGroup')
         else:
-            fig5 = px.scatter(df, x='IncomeGroup', y='Health Expenditure %', title='Met Health expenditure %')
+            fig5 = px.scatter(df, x='IncomeGroup', y='Health Expenditure %', title='Health expenditure & IncomeGroup')
         return fig5
-
- 
-
-    st.title('Life Expectancy & Income Group')
 
  
 
@@ -207,19 +209,26 @@ There are a few clear conclusions that we can get from looking at the scatter pl
     top10 = df[df['Country Name'].isin(first_10_index_names)]
     top10 = top10.sort_values(by=['Life Expectancy Difference (2000-2019)'], ascending=False)
 
-    fig9 = px.bar(top10[top10['Year']==2019], x='Country Name', y='Life Expectancy Difference (2000-2019)',color = 'Region')
+    fig9 = px.bar(top10[top10['Year']==2019], x='Country Name', y='Life Expectancy Difference (2000-2019)'
+                  ,color = 'Region')
+
     st.plotly_chart(fig9, use_container_width=True)     
     st.write("""Over the past 20 years, countries in Sub-Saharan Africa have shown the most significant improvement. 
              The figure above displays the top 10 countries with the largest differences in life expectancy from 2001 to 2019. Some of these nations have increased their life expectancy by almost one year annually.
              """)
     top10 = top10.sort_values(by=['Year'], ascending=False)
-    fig10 = px.line(top10, x='Year', y='Life Expectancy World Bank', color = 'Country Name')
-    st.plotly_chart(fig10, use_container_width=True)  
+    fig_line = px.line(top10, x='Year', y='Life Expectancy World Bank', color = 'Country Name')
+    fig_line.update_layout(title="Life Expectancy by Year")
+    fig_line.update_yaxes(title_text='Life expectancy (years)')
+    fig_line.update_xaxes(title_text='Year')
+    st.plotly_chart(fig_line, use_container_width=True)  
     
-    figa = px.line(top10, x='Year', y='Prevelance of Undernourishment', color = 'Country Name')
-    st.plotly_chart(figa, use_container_width=True)  
+    gig_linefood = px.line(top10, x='Year', y='Prevelance of Undernourishment', color = 'Country Name')
+    gig_linefood.update_layout(title="Prevelance of Undernourishment by Year")
+    st.plotly_chart(gig_linefood, use_container_width=True)  
 
 
+    st.header("Conclusion")
     st.write("""Concluding the life expectancy has significantly gone up every year for the past 20 years. 
               There are several factors that are linked to life expectancy. These factors such as income, Prevelance of Undernourishment and Health Expenditure show that a country’s
                life expectations is directly related to the economic power.""")    
