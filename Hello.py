@@ -177,15 +177,27 @@ There are a few clear conclusions that we can get from looking at the scatter pl
     fig_box.update_yaxes(title_text='Life expectancy (years)')
     st.plotly_chart(fig_box, use_container_width=True)  
 
+    st.write("""This is a visualization showing life expectancy by region over the years.
+
+In the chart, each box represents a region. The line inside the box represents the median life expectancy for that region.
+
+You can use the dropdown menu to select different regions, and the chart will update to show the life expectancy data for that specific region over the years. The x-axis represents the years, and the y-axis represents life expectancy in years.
+
+This visualization allows you to explore how life expectancy has changed over time for different regions around the world.
+
+ 
+
+You can see clearly that the IQR and the max, min ranges from africa are lower than those of Europe and Central Asia. Secondly, you can see that the standard deviation becomes lower and thats a good sign throughout the years.""")    
+
 
 # Functie om de plot te maken
     def create_plot(toon_data):
         if toon_data == 'Life Expectancy':
-            fig5 = px.bar(df, x='IncomeGroup', y='Life Expectancy World Bank', title='Life Expectancy & IncomeGroup', 
+            fig5 = px.box(df, x='IncomeGroup', y='Life Expectancy World Bank', title='Life Expectancy & IncomeGroup', 
                        category_orders = {'IncomeGroup':['Low income', 
                                                           'Lower middle income', 'Upper middle income', 'High income']})
         else:
-            fig5 = px.bar(df, x='IncomeGroup', y='Health Expenditure %', title='Health expenditure & IncomeGroup', 
+            fig5 = px.box(df, x='IncomeGroup', y='Health Expenditure %', title='Health expenditure & IncomeGroup', 
                        category_orders = {'IncomeGroup':['Low income', 
                                                           'Lower middle income', 'Upper middle income', 'High income']})
         return fig5
