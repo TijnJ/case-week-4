@@ -5,9 +5,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
 import plotly as plt
-import seaborn as sns
 from plotly.express import choropleth
-
 
 
 pop = pd.read_csv('population.csv')
@@ -141,28 +139,14 @@ def run():
 There are a few clear conclusions that we can get from looking at the scatter plot between life expectancy and prevalence of undernourishment. The percentage of people that don’t get enough energy by eating is significantly getting smaller. The most countries of people that don’t eat enough are in Africa, this is as expected. We can also conclude the life expectancy is drastically increasing, more for African countries than for European and Asian countries.
 """)    
     
-    fig4 = go.Figure(data=go.Box(
-        x=df['Year'],  
-        y=df['Life Expectancy World Bank'],
-        color= "Year"  
-        )
-    )
-    dropdown_options = [
-        {'label': 'South Asia', 'method': 'update', 'args': [{'y': [df[df['Region'] == 'South Asia']['Life Expectancy World Bank']], 'x': [df[df['Region'] == 'South Asia']['Year']], 'text': [df[df['Region'] == 'South Asia']['Country Name']], 'marker.color': [df[df['Region'] == 'South Asia']['Life Expectancy World Bank']], 'colorbar.title': 'Levensverwachting'}]},
-        {'label': 'Sub-Saharan Africa', 'method': 'update', 'args': [{'y': [df[df['Region'] == 'Sub-Saharan Africa']['Life Expectancy World Bank']], 'x': [df[df['Region'] == 'Sub-Saharan Africa']['Year']], 'text': [df[df['Region'] == 'Sub-Saharan Africa']['Country Name']], 'marker.color': [df[df['Region'] == 'Sub-Saharan Africa']['Life Expectancy World Bank']], 'colorbar.title': 'Levensverwachting'}]},
-        {'label': 'Europe & Central Asia', 'method': 'update', 'args': [{'y': [df[df['Region'] == 'Europe & Central Asia']['Life Expectancy World Bank']], 'x': [df[df['Region'] == 'Europe & Central Asia']['Year']], 'text': [df[df['Region'] == 'Europe & Central Asia']['Country Name']], 'marker.color': [df[df['Region'] == 'Europe & Central Asia']['Life Expectancy World Bank']], 'colorbar.title': 'Levensverwachting'}]},
-        {'label': 'Middle East & North Africa', 'method': 'update', 'args': [{'y': [df[df['Region'] == 'Middle East & North Africa']['Life Expectancy World Bank']], 'x': [df[df['Region'] == 'Middle East & North Africa']['Year']], 'text': [df[df['Region'] == 'Middle East & North Africa']['Country Name']], 'marker.color': [df[df['Region'] == 'Middle East & North Africa']['Life Expectancy World Bank']], 'colorbar.title': 'Levensverwachting'}]},
-        {'label': 'Latin America & Caribbean', 'method': 'update', 'args': [{'y': [df[df['Region'] == 'Latin America & Caribbean']['Life Expectancy World Bank']], 'x': [df[df['Region'] == 'Latin America & Caribbean']['Year']], 'text': [df[df['Region'] == 'Latin America & Caribbean']['Country Name']], 'marker.color': [df[df['Region'] == 'Latin America & Caribbean']['Life Expectancy World Bank']], 'colorbar.title': 'Levensverwachting'}]},
-        {'label': 'East Asia & Pacific', 'method': 'update', 'args': [{'y': [df[df['Region'] == 'East Asia & Pacific']['Life Expectancy World Bank']], 'x': [df[df['Region'] == 'East Asia & Pacific']['Year']], 'text': [df[df['Region'] == 'East Asia & Pacific']['Country Name']], 'marker.color': [df[df['Region'] == 'East Asia & Pacific']['Life Expectancy World Bank']], 'colorbar.title': 'Levensverwachting'}]},
-        {'label': 'North America', 'method': 'update', 'args': [{'y': [df[df['Region'] == 'North America']['Life Expectancy World Bank']], 'x': [df[df['Region'] == 'North America']['Year']], 'text': [df[df['Region'] == 'North America']['Country Name']], 'marker.color': [df[df['Region'] == 'North America']['Life Expectancy World Bank']], 'colorbar.title': 'Levensverwachting'}]},
-    ]
-    # Voeg het dropdown-menu toe aan de layout
-    fig4.update_layout(updatemenus=[{'buttons': dropdown_options, 'direction': 'down', 'showactive': True, 'x': 0.76, 'xanchor': 'left', 'y': 1.11, 'yanchor': 'top'}])
-    fig4.update_layout(title="Life Expectancy by region over the years")
-    fig4.update_xaxes(title_text='Year')
-    fig4.update_yaxes(title_text='Life expectancy (Age)')
-    
-    st.plotly_chart(fig4, use_container_width=True)     
+    average_life_expectancy = df.groupby("IncomeGroup")["Life Expectancy World Bank"].mean().reset_index()
+    fig_income = px.bar(average_life_expectancy, y="Life Expectancy World Bank", x="IncomeGroup", 
+                       category_orders = {'IncomeGroup':['Low income', 
+                                                          'Lower middle income', 'Upper middle income', 'High income']})
+
+    fig_income.update_layout(title= 'Life expectancy per income group', xaxis_title = 'Income Group', yaxis_title = 'Life expectancy (Years)')
+    st.plotly_chart(fig_income, use_container_width=True)  
+
 
 # Functie om de plot te maken
     def create_plot(toon_data):
@@ -208,6 +192,8 @@ There are a few clear conclusions that we can get from looking at the scatter pl
     figb = px.line(top10, x='Year', y='Communicable%', color = 'Country Name')
     st.plotly_chart(figb, use_container_width=True)  
 
+ 
+ 
 
 
 
