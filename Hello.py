@@ -42,8 +42,13 @@ def run():
         page_icon="👋",
     )
 
-    st.title("A Short Blog On Global Life Expectancy")
+    st.title("Analysis Of Global Life Expectancy")
 
+    st.write("""This is an analysis blog about the life expectancy of different countries in different regions. The main data that is used comes from kaggle as an api and the secondary data is from ourworldindata.org downloaded as an csv file.
+
+ 
+
+In the analysis the main focus will be the change over the years in life expectancy, the difference between the different countries and the regions they are in. Why is one country living longer than another and why is one country’s life expectancy growing faster?""")
     # Create the Choropleth plot
     fig_world = go.Figure(data=go.Choropleth(
         locations=df['Country Name'],
@@ -143,17 +148,7 @@ There are a few clear conclusions that we can get from looking at the scatter pl
     st.plotly_chart(fig_scatter, use_container_width=True)     
     st.write(f"Correlation between health expenditure and life expectancy: {correlation:.2f}")
     
-    
-    average_life_expectancy = df.groupby("IncomeGroup")["Life Expectancy World Bank"].mean().reset_index()
-    fig_income = px.bar(average_life_expectancy, y="Life Expectancy World Bank", x="IncomeGroup", 
-                       category_orders = {'IncomeGroup':['Low income', 
-                                                          'Lower middle income', 'Upper middle income', 'High income']})
 
-    fig_income.update_layout(title= 'Life expectancy per income group', xaxis_title = 'Income Group', yaxis_title = 'Life expectancy (Years)')
-    st.plotly_chart(fig_income, use_container_width=True)  
-
-    st.write("""The bar chart above shows that there could be a positive correlation between the income per capita and life expectancy. This suggest that wealthier countries tend to have a higher life expectancy.""")
-    
     fig_box = go.Figure(data=go.Box(
         x=df['Year'],  
         y=df['Life Expectancy World Bank'],  
@@ -186,9 +181,13 @@ There are a few clear conclusions that we can get from looking at the scatter pl
 # Functie om de plot te maken
     def create_plot(toon_data):
         if toon_data == 'Life Expectancy':
-            fig5 = px.scatter(df, x='IncomeGroup', y='Life Expectancy World Bank', title='Life Expectancy & IncomeGroup')
+            fig5 = px.bar(df, x='IncomeGroup', y='Life Expectancy World Bank', title='Life Expectancy & IncomeGroup', 
+                       category_orders = {'IncomeGroup':['Low income', 
+                                                          'Lower middle income', 'Upper middle income', 'High income']})
         else:
-            fig5 = px.scatter(df, x='IncomeGroup', y='Health Expenditure %', title='Health expenditure & IncomeGroup')
+            fig5 = px.bar(df, x='IncomeGroup', y='Health Expenditure %', title='Health expenditure & IncomeGroup', 
+                       category_orders = {'IncomeGroup':['Low income', 
+                                                          'Lower middle income', 'Upper middle income', 'High income']})
         return fig5
 
  
@@ -209,10 +208,10 @@ There are a few clear conclusions that we can get from looking at the scatter pl
     top10 = df[df['Country Name'].isin(first_10_index_names)]
     top10 = top10.sort_values(by=['Life Expectancy Difference (2000-2019)'], ascending=False)
 
-    fig9 = px.bar(top10[top10['Year']==2019], x='Country Name', y='Life Expectancy Difference (2000-2019)'
+    fig_bartop10 = px.bar(top10[top10['Year']==2019], x='Country Name', y='Life Expectancy Difference (2000-2019)'
                   ,color = 'Region')
-
-    st.plotly_chart(fig9, use_container_width=True)     
+    fig_bartop10.update_layout(title="10 Countries With Highest Increse In Life Expectancy (2001-2019)")
+    st.plotly_chart(fig_bartop10, use_container_width=True)     
     st.write("""Over the past 20 years, countries in Sub-Saharan Africa have shown the most significant improvement. 
              The figure above displays the top 10 countries with the largest differences in life expectancy from 2001 to 2019. Some of these nations have increased their life expectancy by almost one year annually.
              """)
