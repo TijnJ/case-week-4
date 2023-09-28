@@ -32,6 +32,23 @@ for country in common_countries:
     df.loc[df['Country Name'] == country, 'Life Expectancy Difference (2000-2019)'] = diff
 df = df.sort_values(by=['Country Name','Life Expectancy Difference (2000-2019)'], ascending=False)
 
+columns = ['Prevelance of Undernourishment', 'Education Expenditure %', 'Unemployment', 'Sanitation']
+
+threshold = len(df)*0.05
+cols_to_drop = df.columns[df.isna().sum() <= threshold]
+df.dropna(subset=cols_to_drop, inplace=True)
+df.dropna(subset=['Life Expectancy World Bank', 'Health Expenditure %'], inplace=True)
+df = df.drop(['Corruption'], axis = 1)
+# Make a new dataframe with the mean per region
+mean_values = df.groupby('Region')[columns].mean().reset_index()
+# Use merge to merge these data frames 
+df = df.merge(mean_values, on='Region', suffixes=('', '_mean'))
+# fill the missing values with the mean
+for column in columns:
+    df[column].fillna(df[f'{column}_mean'], inplace=True)
+
+# drop the columns that were temporary 
+df.drop(columns=[f'{column}_mean' for column in columns], inplace=True)
 
 LOGGER = get_logger(__name__)
 
