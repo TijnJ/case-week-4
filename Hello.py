@@ -147,6 +147,7 @@ There are a few clear conclusions that we can get from looking at the scatter pl
     fig_income.update_layout(title= 'Life expectancy per income group', xaxis_title = 'Income Group', yaxis_title = 'Life expectancy (Years)')
     st.plotly_chart(fig_income, use_container_width=True)  
 
+    st.write("""The bar chart above shows that there could be a positive correlation between the income per capita and life expectancy. This suggest that wealthier countries tend to have a higher life expectancy.""")
     fig_box = go.Figure(data=go.Box(
         x=df['Year'],  
         y=df['Life Expectancy World Bank'],  
@@ -178,7 +179,7 @@ There are a few clear conclusions that we can get from looking at the scatter pl
 
 # Functie om de plot te maken
     def create_plot(toon_data):
-        if toon_data == 'Ja':
+        if toon_data == 'Life Expectancy':
             fig5 = px.scatter(df, x='IncomeGroup', y='Life Expectancy World Bank', title='Zonder Health expenditure %')
         else:
             fig5 = px.scatter(df, x='IncomeGroup', y='Health Expenditure %', title='Met Health expenditure %')
@@ -191,7 +192,7 @@ There are a few clear conclusions that we can get from looking at the scatter pl
  
 
 # Creëer een interactieve plot met checkboxes
-    toon_data = st.radio('Toon data:', ['Ja', 'Nee'])
+    toon_data = st.radio('', ['Life Expectancy', 'Health Expenditure'])
     fig5 = create_plot(toon_data)
     st.plotly_chart(fig5, use_container_width=True)     
     st.write("""Without Health Expenditure %: This chart illustrates how life expectancy varies across different income groups without taking health expenditure into account.
