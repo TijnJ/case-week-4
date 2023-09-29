@@ -70,7 +70,7 @@ In the analysis the main focus will be the change over the years in life expecta
     fig_world = go.Figure(data=go.Choropleth(
         locations=df['Country Name'],
         z=df['Life Expectancy World Bank'],
-        locationmode='country names',
+        locationmode='Country Code',
         colorscale='bluyl',
         colorbar_title="Scale",
         zmin=40,
